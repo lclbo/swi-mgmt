@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <radialGradient id="glow" cx="512" cy="470" r="340" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4ade80" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#4ade80" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="faceShade" x1="262" y1="302" x2="262" y2="722" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#475569"/>
+      <stop offset="1" stop-color="#1e293b"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Rounded app plate -->
+  <rect x="0" y="0" width="1024" height="1024" rx="224" ry="224" fill="#12121c"/>
+  <circle cx="512" cy="470" r="340" fill="url(#glow)"/>
+
+  <!-- RJ45 housing (.jack-face) -->
+  <rect x="262" y="302" width="500" height="420" rx="36" ry="36" fill="url(#faceShade)" stroke="#0f172a" stroke-width="14"/>
+
+  <!-- Lit opening (.jack-face.up .rj45-opening) -->
+  <rect x="322" y="357" width="380" height="230" rx="14" ry="14" fill="#166534" stroke="#4ade80" stroke-width="12"/>
+
+  <!-- Contact strip (.jack-face.up .rj45-contacts) -->
+  <rect x="367" y="387" width="290" height="78" rx="10" ry="10" fill="#4ade80"/>
+  <rect x="384" y="394" width="18" height="64" rx="3" ry="3" fill="#14532d" opacity="0.5"/>
+  <rect x="422" y="394" width="18" height="64" rx="3" ry="3" fill="#14532d" opacity="0.5"/>
+  <rect x="460" y="394" width="18" height="64" rx="3" ry="3" fill="#14532d" opacity="0.5"/>
+  <rect x="498" y="394" width="18" height="64" rx="3" ry="3" fill="#14532d" opacity="0.5"/>
+  <rect x="536" y="394" width="18" height="64" rx="3" ry="3" fill="#14532d" opacity="0.5"/>
+  <rect x="574" y="394" width="18" height="64" rx="3" ry="3" fill="#14532d" opacity="0.5"/>
+  <rect x="612" y="394" width="18" height="64" rx="3" ry="3" fill="#14532d" opacity="0.5"/>
+
+  <!-- Latch tab (.jack-face.up .rj45-tab) -->
+  <path d="M417 582 L607 582 L632 667 L392 667 Z" fill="#4ade80" stroke="#86efac" stroke-width="10" stroke-linejoin="round"/>
+</svg>

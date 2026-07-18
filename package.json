@@ -1,0 +1,21 @@
+{
+  "name": "swi-mgmt",
+  "private": true,
+  "version": "0.10.20",
+  "scripts": {
+    "dev:api": "swi-mgmt-api",
+    "dev:web": "npm run dev --workspace=frontend",
+    "dev": "bash scripts/dev.sh",
+    "build:web": "npm run build --workspace=frontend",
+    "icons": "python3 scripts/make_icons.py",
+    "tauri": "tauri",
+    "tauri:dev": "bash scripts/ensure-dev-sidecar.sh && tauri dev",
+    "tauri:build": "bash scripts/build-desktop.sh"
+  },
+  "workspaces": [
+    "frontend"
+  ],
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.1.1"
+  }
+}

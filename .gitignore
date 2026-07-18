@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg
+*.egg-info/
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+coverage.xml
+*.log
+
+# Local / accidental config drops (real config lives in ~/.config/swi-mgmt/)
+config.yaml
+*.local.yaml
+*.local.yml
+
+# Node / frontend
+node_modules/
+frontend/dist/
+frontend/dist-ssr/
+*.tsbuildinfo
+
+# PyInstaller / packaging
+build/
+dist/
+*.spec
+
+# Tauri / Rust
+src-tauri/target/
+src-tauri/binaries/
+src-tauri/gen/
+Cargo.toml.orig
+
+# IDE / editor / local tooling
+.cursor/
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini

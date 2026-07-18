@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "identifier": "default",
+  "description": "Default permissions for SWI-MGMT",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "shell:default",
+    {
+      "identifier": "shell:allow-spawn",
+      "allow": [
+        {
+          "name": "swi-mgmt-api",
+          "cmd": "swi-mgmt-api",
+          "sidecar": true,
+          "args": true
+        }
+      ]
+    }
+  ]
+}
