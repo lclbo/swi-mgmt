@@ -100,11 +100,7 @@ App / favicon art is the lit (green) RJ45 from the front-panel view (`assets/app
 
 ## Screenshots
 
-Fictive lab for documentation only (`10.0.0.0/24`): three Instant On sizes (8G / 24G / 48G), eight VLANs, mixed link state, and PoE on some active copper ports. No demo mode ships in the app.
-
-Paths are relative to the repository root (works on GitHub README, clones, and forks).
-
-**Front Panel** — all three chassis
+**Front Panel** — all switches
 
 ![Front Panel with three fictive switches](docs/screenshots/front-panel.png)
 
@@ -128,7 +124,7 @@ Paths are relative to the repository root (works on GitHub README, clones, and f
 
 ### HPE/Aruba Instant On 1930 / 1960
 
-Enable SNMP in the switch’s **local web UI** or the Instant On mobile/cloud management app (System / SNMP), and set a dedicated read-only community — not a guessable shared string.
+Enable SNMP in the switch’s **local web UI** or the Instant On mobile/cloud management app (System / SNMP), and set a dedicated read-only community.
 
 ### TP-Link JetStream SG2424 / T1600G-28TS
 
