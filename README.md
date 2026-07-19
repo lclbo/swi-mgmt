@@ -98,6 +98,32 @@ App / favicon art is the lit (green) RJ45 from the front-panel view (`assets/app
 5. **Session VLANs** — Click a VLAN to filter/highlight; click again to clear
 6. **Scenarios** — Export or import inventory JSON for shows / backups
 
+## Screenshots
+
+Fictive lab for documentation only (`10.0.0.0/24`): three Instant On sizes (8G / 24G / 48G), eight VLANs, mixed link state, and PoE on some active copper ports. No demo mode ships in the app.
+
+Paths are relative to the repository root (works on GitHub README, clones, and forks).
+
+**Front Panel** — all three chassis
+
+![Front Panel with three fictive switches](docs/screenshots/front-panel.png)
+
+**Ports** — selected 24G switch
+
+![Ports table](docs/screenshots/ports.png)
+
+**VLAN List**
+
+![VLAN List tab](docs/screenshots/vlan-list.png)
+
+**VLAN Matrix**
+
+![VLAN Matrix tab](docs/screenshots/vlan-matrix.png)
+
+**Live View**
+
+![Live View tab](docs/screenshots/live-view.png)
+
 ## Switch setup examples
 
 ### HPE/Aruba Instant On 1930 / 1960
