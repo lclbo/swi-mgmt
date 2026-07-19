@@ -110,6 +110,91 @@ Enable SNMP v2c (or v3) in the web UI or CLI and allow Q-BRIDGE / Bridge MIB acc
 
 ## Architecture
 
+SWI-MGMT is three cooperating pieces: a **UI**, an **API** (the “brain”), and optionally a **desktop shell** that starts/stops that API as a sidecar. The UI never talks SNMP directly.
+
+### Components
+
+| Component | What it is | Responsibility |
+|-----------|------------|----------------|
+| **UI** | React app (`frontend/`) | Screens, filters, live polling UX. Calls HTTP `/api/*` only. |
+| **API** (`swi-mgmt-api`) | FastAPI + SNMP stack (`src/swi_mgmt/`) | Config, sessions, scans, snapshots, drivers. Owns SNMP to switches. |
+| **Desktop shell** | Tauri / Rust (`src-tauri/`) | Native window; embeds the UI; spawns the API as a **sidecar** process. |
+| **Config file** | `~/.config/swi-mgmt/config.yaml` | Persisted inventory & settings (outside the repo). |
+| **Switches** | Network devices | SNMP agents (UDP/161). Read-only from this app’s point of view. |
+
+**Sidecar** means: the API binary is packaged next to the `.app` and launched as a child process. It is the same FastAPI server you run with `swi-mgmt-api` in development — not a second protocol stack.
+
+```mermaid
+flowchart TB
+  subgraph desktop["Desktop .app (optional)"]
+    Shell["Desktop shell<br/>Tauri / Rust"]
+    UI_D["UI<br/>React webview"]
+    Sidecar["API sidecar<br/>swi-mgmt-api"]
+    Shell -->|spawns / graceful shutdown| Sidecar
+    Shell -->|hosts| UI_D
+    UI_D -->|"HTTP 127.0.0.1:18742"| Sidecar
+  end
+
+  subgraph dev["Development / web-only"]
+    UI_W["UI<br/>Vite or static files"]
+    API["API<br/>swi-mgmt-api"]
+    UI_W -->|"HTTP /api → :18742"| API
+  end
+
+  Config[("config.yaml<br/>~/.config/swi-mgmt/")]
+  Switches[("Switches<br/>SNMP UDP/161")]
+
+  Sidecar --- Config
+  API --- Config
+  Sidecar --> Switches
+  API --> Switches
+```
+
+### Who talks to whom
+
+```mermaid
+flowchart LR
+  UI["UI"] -->|"JSON over HTTP<br/>loopback only"| API["API"]
+  Shell["Desktop shell"] -.->|"owns process<br/>+ shutdown token"| API
+  API -->|"read/write"| Cfg[("config.yaml")]
+  API -->|"SNMP get/walk"| SW[("switches")]
+```
+
+- **UI → API:** all product data (switches, snapshots, scan, scenarios, highlight). In the `.app`, the UI calls `http://127.0.0.1:18742/api/...`. In Vite dev, `/api` is proxied to that same port.
+- **Shell → API:** process lifecycle only. On launch, if nothing healthy is listening, the shell starts the sidecar with a one-time **shutdown token**. On quit, it asks *that* process to exit via `POST /api/shutdown` (token required). It does **not** kill a reused API started by `npm run dev` or another instance.
+- **API → config / switches:** persistence and SNMP. The shell and UI never open `config.yaml` or SNMP sockets themselves.
+
+### Run modes (same components, different packaging)
+
+| Mode | UI process | API process | How they meet |
+|------|------------|-------------|----------------|
+| **`npm run dev`** | Vite (`localhost:1420`) | `swi-mgmt-api` (script-started) | Proxy `/api` → `:18742` |
+| **Web-only** | Served by the API (built `frontend/dist`) | Single `swi-mgmt-api` | Same origin `/api` |
+| **Desktop `.app`** | Tauri webview | Bundled sidecar (or reuse if already healthy) | UI → `127.0.0.1:18742` |
+
+```mermaid
+sequenceDiagram
+  participant User
+  participant Shell as Desktop shell
+  participant UI as UI
+  participant API as API sidecar
+  participant SW as Switch
+
+  User->>Shell: open .app
+  Shell->>API: spawn with shutdown token<br/>(if port not already healthy)
+  Shell->>UI: show window
+  UI->>API: GET /api/config, snapshots, …
+  API->>SW: SNMP
+  SW-->>API: MIBs / counters
+  API-->>UI: JSON
+  User->>Shell: quit
+  Shell->>API: POST /api/shutdown + token
+  Note over API: exits itself (no hard kill)
+  Shell->>Shell: exit
+```
+
+### Source layout
+
 ```
 src/swi_mgmt/
 ├── snmp/          # Client, OIDs, portlist, scanner, v3
