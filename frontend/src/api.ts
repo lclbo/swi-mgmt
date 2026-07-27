@@ -117,4 +117,23 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ scenario, mode }),
     }),
+
+  /** Download VLAN matrix workbook (all switches on one sheet). */
+  exportVlanMatrixXlsx: async () => {
+    const res = await fetch(`${apiBase()}/export/vlan-matrix.xlsx`);
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(parseApiError(text) || res.statusText);
+    }
+    const blob = await res.blob();
+    const cd = res.headers.get("Content-Disposition") || "";
+    const match = /filename="?([^"]+)"?/i.exec(cd);
+    const filename = match?.[1] || "swi-mgmt-vlan-matrix.xlsx";
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  },
 };

@@ -1087,6 +1087,18 @@ function ScenarioDialog({
     }
   };
 
+  const handleExportXlsx = async () => {
+    setBusy(true);
+    setError("");
+    try {
+      await api.exportVlanMatrixXlsx();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const handleFile = async (file: File | null) => {
     setError("");
     setPreview(null);
@@ -1158,9 +1170,19 @@ function ScenarioDialog({
 
         <div className="scenario-section">
           <div className="scenario-section-title">Export</div>
-          <button type="button" className="primary" disabled={busy} onClick={() => void handleExport()}>
-            Download scenario JSON
-          </button>
+          <div className="scenario-export-row">
+            <button type="button" className="primary" disabled={busy} onClick={() => void handleExport()}>
+              Download scenario JSON
+            </button>
+            <button
+              type="button"
+              disabled={busy || currentSwitchCount === 0}
+              title="VLAN matrix for all switches in one Excel sheet"
+              onClick={() => void handleExportXlsx()}
+            >
+              Export .xlsx
+            </button>
+          </div>
         </div>
 
         <div className="scenario-section">

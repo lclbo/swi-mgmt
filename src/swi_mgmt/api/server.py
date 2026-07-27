@@ -8,12 +8,15 @@ import logging
 import os
 import secrets
 import signal
+from datetime import datetime, timezone
 from typing import Literal, Optional
 
 import uvicorn
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
+
+from fastapi.responses import Response
 
 from swi_mgmt.api.errors import format_snmp_error
 from swi_mgmt.api.serialize import (
@@ -29,12 +32,13 @@ from swi_mgmt.config import (
     insert_switch,
     normalize_switch_order,
 )
+from swi_mgmt.export import build_vlan_matrix_workbook
 from swi_mgmt.scenario import ScenarioError, export_scenario
 from swi_mgmt.snmp.scanner import get_local_subnet, list_candidate_subnets, suggest_scan_cidr
 
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="SWI-MGMT API", version="0.10.20")
+app = FastAPI(title="SWI-MGMT API", version="0.11.3")
 state = AppState()
 
 # Shutdown token: optional secret set only when the desktop .app spawns this
@@ -353,6 +357,38 @@ async def get_snapshot(
 @app.get("/api/session")
 async def get_session() -> dict:
     return state.session_state()
+
+
+@app.get("/api/export/vlan-matrix.xlsx")
+async def export_vlan_matrix_xlsx() -> Response:
+    """Excel workbook: one sheet per switch with frozen VLAN heading row."""
+    if not state.config.switches:
+        raise HTTPException(400, "No switches configured")
+
+    errors: dict[str, str] = {}
+    for sw in state.config.switches:
+        if sw.host in state.snapshots:
+            continue
+        try:
+            await state.refresh_switch(sw.host, mode="fast")
+        except Exception as exc:
+            errors[sw.host] = format_snmp_error(sw.host, sw, exc)
+            logger.warning("VLAN matrix export: could not load %s: %s", sw.host, exc)
+
+    session = state.session_state()
+    payload = build_vlan_matrix_workbook(
+        switches=state.config.switches,
+        snapshots=state.snapshots,
+        session_vlans=session["vlans"],
+        errors=errors,
+    )
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
+    filename = f"swi-mgmt-vlan-matrix-{stamp}.xlsx"
+    return Response(
+        content=payload,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
 
 
 @app.post("/api/session/highlight")

@@ -623,7 +623,8 @@ button.live-interval.visible.open {
   color: var(--muted);
 }
 
-.scenario-import-row {
+.scenario-import-row,
+.scenario-export-row {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -959,6 +960,12 @@ button.live-interval.visible.open {
 .content-bar-spacer {
   flex: 1;
   min-width: 8px;
+}
+
+.content-bar-btn {
+  font-size: 12px;
+  padding: 4px 10px;
+  white-space: nowrap;
 }
 
 .loading-inline {

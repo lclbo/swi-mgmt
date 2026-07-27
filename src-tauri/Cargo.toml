@@ -1,6 +1,6 @@
 [package]
 name = "swi-mgmt"
-version = "0.10.20"
+version = "0.11.3"
 description = "Network switch management for event engineers"
 authors = ["swi-mgmt"]
 edition = "2021"

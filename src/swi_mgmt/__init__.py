@@ -1,3 +1,3 @@
 """SWI-MGMT: Switch management GUI for event engineers."""
 
-__version__ = "0.10.20"
+__version__ = "0.11.3"

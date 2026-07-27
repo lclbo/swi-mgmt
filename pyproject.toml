@@ -1,6 +1,6 @@
 [project]
 name = "swi-mgmt"
-version = "0.10.20"
+version = "0.11.3"
 description = "Network switch management for event engineers (audio/light/video)"
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -10,6 +10,7 @@ dependencies = [
     "pyyaml>=6.0",
     "fastapi>=0.110",
     "uvicorn[standard]>=0.27",
+    "openpyxl>=3.1",
 ]
 
 [project.optional-dependencies]

@@ -26,6 +26,8 @@ pyinstaller \
   --hidden-import uvicorn.protocols.websockets.auto \
   --hidden-import uvicorn.lifespan.on \
   --collect-all pysnmp \
+  --hidden-import openpyxl \
+  --collect-all openpyxl \
   "${ROOT}/scripts/api_entry.py"
 
 # Tauri externalBin "binaries/swi-mgmt-api" resolves to
